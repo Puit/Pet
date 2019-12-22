@@ -14,11 +14,14 @@ public class CobiController : MonoBehaviour
     public float health, food, WC, play, sleep, lovis, whatter;
 
     public CanvasController canvas;
+    public ObjectsController objects;
+    private bool sleeping = false;
 
     private void Start()
     {
         canvas = FindObjectOfType<CanvasController>();
     }
+    
     void Update()
     {
         health = deposits[0].percentage;
@@ -38,8 +41,9 @@ public class CobiController : MonoBehaviour
             if (transform.rotation != Quaternion.identity)
                 transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.identity, 5f * Time.deltaTime);
         }
-        if (canvas.playerTouched)
+        if (canvas.playerTouched && !objects.dragging && !sleeping)
         {
+            deposits[5].percentage += 5f *Time.deltaTime;
             animator.SetBool("Touched", true);
         }
         else
@@ -48,10 +52,8 @@ public class CobiController : MonoBehaviour
         }
 
 
-        if(lovis < 20f && !canvas.playerTouched) 
+        if(lovis < 20f && !canvas.playerTouched && !sleeping) 
         {
-            deposits[5].seconds -= 2f; // No va, se sobreescribe
-
             animator.SetBool("NeedLovis", true);
         }
         else
@@ -60,14 +62,6 @@ public class CobiController : MonoBehaviour
         }
 
     }
-    //private void OnMouseDown()
-    //{
-
-    //    animator.SetBool("Touched",true);
-    //    Debug.Log("ONMOUSEDOWN");
-    //    //touched = true;
-
-    //}
     private void FingerDrag()
     {
         if (canvas.fingerDown)
@@ -78,14 +72,15 @@ public class CobiController : MonoBehaviour
                 head.transform.rotation = Quaternion.Lerp(transform.rotation, rotation, 3f * Time.deltaTime);
             }
         }
-
-
     }
-
-    //private void OnMouseUp()
-    //{
-    //    animator.SetBool("Touched", false);
-    //    //touched = false;
-    //    transform.rotation = Quaternion.identity;
-    //}
+    public void SleepingOn()
+    {
+        sleeping = true;
+        animator.SetBool("Sleeping", true);
+    }
+    public void SleepingOff()
+    {
+        sleeping = false;
+        animator.SetBool("Sleeping", false);
+    }
 }

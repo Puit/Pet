@@ -8,6 +8,8 @@ public class ObjectToDragController : MonoBehaviour, IDragHandler, IEndDragHandl
 {
     private Vector3 startPosition;
     private CanvasController canvas;
+
+    private Vector3 acceleration;
     private void Start()
     {
         startPosition = transform.position;
@@ -16,50 +18,31 @@ public class ObjectToDragController : MonoBehaviour, IDragHandler, IEndDragHandl
     public void OnDrag(PointerEventData eventData)
     {
         transform.position = Input.mousePosition;
+        acceleration = Input.acceleration;
+
+        Vector3 pos = Camera.main.ScreenToWorldPoint(transform.position);
+        RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero);
+
+            
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        transform.position = startPosition;
-        if (Input.GetMouseButtonDown(0)) //NO VA PERQUE BUSQUEM EL INPUT MOUSE POSITION I NO HI HA MOUSE JA QUE S'HA AIXECAT EL DIT
-        {
-            string tag;
-            Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero);
-            if (hit.collider != null)
-            {
-
-                tag =  hit.collider.tag;
-
-            }
-            Debug.Log("TAG: " + hit.collider.tag);
-        }
         
+        string tag = "";
+        Vector3 pos = Camera.main.ScreenToWorldPoint(transform.position);
+        RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero);
+
+        if (hit.collider != null)
+        {
+            tag =  hit.collider.tag;
+        }
+        if (tag.Equals("Player"))
+        {
+            CobiController cobi = hit.collider.GetComponent<CobiController>();
+            
+        }
+
+        transform.position = startPosition;
     }
 }
-
-//transform.position = startPosition;
-//        if (Input.GetMouseButtonDown(0))
-//        {
-//            string tag;
-//Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-////RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero);
-//RaycastHit2D[] hit = Physics2D.RaycastAll(pos, Vector2.zero);
-//Debug.Log("IN: ");
-//            foreach (RaycastHit2D h in hit)
-//            {
-//                Debug.Log("IN  ");
-//                if (h.collider != null)
-//                {
-//                    tag = h.collider.tag;
-//                    Debug.Log("TAG: " + tag);
-//                }
-//            }
-//            //if (hit.collider != null)
-//            //{
-
-//            //    tag =  hit.collider.tag;
-
-//            //}
-//        }
-//        //Debug.Log("TAG: "+ tag);
