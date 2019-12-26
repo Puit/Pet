@@ -123,7 +123,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5510482130632376130}
   - component: {fileID: 2901767256705630254}
-  - component: {fileID: 6916565042994781089}
   m_Layer: 0
   m_Name: CobiSleeping
   m_TagString: Player
@@ -165,37 +164,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &6916565042994781089
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 977988349454440575}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 95ebcfc3062e34942ae7e9043e80e6f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 2901767256705630254}
-  head: {fileID: 2510632725502356643}
-  deposits:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  health: 0
-  food: 0
-  WC: 0
-  play: 0
-  sleep: 0
-  lovis: 0
-  whatter: 0
-  canvas: {fileID: 0}
-  objects: {fileID: 0}
 --- !u!1 &1970158957221529092
 GameObject:
   m_ObjectHideFlags: 0
@@ -213,7 +181,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5345624015292428867
 Transform:
   m_ObjectHideFlags: 0

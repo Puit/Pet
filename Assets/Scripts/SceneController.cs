@@ -10,12 +10,6 @@ public class SceneController : MonoBehaviour
 
     // Health, Food, WC, Play, Sleep, Lovis, Whatter
     public List<DepositController> deposits;
-
-    //private void Start()
-    //{
-    //    Debug.Log("I'm Start");
-    //    UpdateDeposits();
-    //}
     public void Awake()
     {
         Debug.Log("I'm Awake");

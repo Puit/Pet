@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +18,9 @@ public class CobiController : MonoBehaviour
     public ObjectsController objects;
     private bool sleeping = false;
 
+    public GameObject eyeBacks, cheeks, mouth;
+    public Sprite mouthHappy, mouthSad;
+
     private void Start()
     {
         canvas = FindObjectOfType<CanvasController>();
@@ -24,43 +28,82 @@ public class CobiController : MonoBehaviour
     
     void Update()
     {
-        health = deposits[0].percentage;
-        food = deposits[1].percentage;
-        WC = deposits[2].percentage;
-        play = deposits[3].percentage;
-        sleep = deposits[4].percentage;
-        lovis = deposits[5].percentage;
-        whatter = deposits[6].percentage;
+        //When Sleeping, the gameObjects is set inactive and everything is fucked up :) so I solved in a simple Try Catch
+        try
+        {
+            health = deposits[0].percentage;
+            food = deposits[1].percentage;
+            WC = deposits[2].percentage;
+            play = deposits[3].percentage;
+            sleep = deposits[4].percentage;
+            lovis = deposits[5].percentage;
+            whatter = deposits[6].percentage;
 
-        if (canvas.fingerDown)
-        {
-            FingerDrag();
-        }
-        else
-        {
-            if (transform.rotation != Quaternion.identity)
-                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.identity, 5f * Time.deltaTime);
-        }
-        if (canvas.playerTouched && !objects.dragging && !sleeping)
-        {
-            deposits[5].percentage += 5f *Time.deltaTime;
-            animator.SetBool("Touched", true);
-        }
-        else
-        {
-            animator.SetBool("Touched", false);
-        }
+            if (canvas.fingerDown)
+            {
+                FingerDrag();
+            }
+            else
+            {
+                if (transform.rotation != Quaternion.identity)
+                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.identity, 5f * Time.deltaTime);
+            }
+            if (canvas.playerTouched && !objects.dragging && !sleeping)
+            {
+                deposits[5].percentage += 5f * Time.deltaTime;
+                animator.SetBool("Touched", true);
+            }
+            else
+            {
+                animator.SetBool("Touched", false);
+            }
 
 
-        if(lovis < 20f && !canvas.playerTouched && !sleeping) 
-        {
-            animator.SetBool("NeedLovis", true);
-        }
-        else
-        {
-            animator.SetBool("NeedLovis", false);
-        }
+            if (lovis < 20f && !canvas.playerTouched && !sleeping)
+            {
+                animator.SetBool("NeedLovis", true);
 
+            }
+            else
+            {
+                animator.SetBool("NeedLovis", false);
+            }
+
+            if (sleeping)
+            {
+                Debug.Log("IN SLEEPING");
+                deposits[4].percentage += 2f * Time.deltaTime;
+            }
+
+            if (sleep < 20f)
+            {
+                eyeBacks.SetActive(true);
+                //mouth.GetComponent<SpriteRenderer>().sprite = mouthSad;
+            }
+            else
+                eyeBacks.SetActive(false);
+            //mouth.GetComponent<SpriteRenderer>().sprite = mouthHappy;
+
+            if (health < 20f)
+            {
+                cheeks.SetActive(true);
+                //mouth.GetComponent<SpriteRenderer>().sprite = mouthSad;
+            }
+            else
+            {
+                cheeks.SetActive(false);
+                //mouth.GetComponent<SpriteRenderer>().sprite = mouthHappy;
+            }
+            if (sleep < 20f || health < 20f)
+                mouth.GetComponent<SpriteRenderer>().sprite = mouthSad;
+            else
+                mouth.GetComponent<SpriteRenderer>().sprite = mouthHappy;
+        }
+        catch (Exception e)
+        {
+
+        }
+        
     }
     private void FingerDrag()
     {
@@ -75,12 +118,16 @@ public class CobiController : MonoBehaviour
     }
     public void SleepingOn()
     {
+        Debug.Log("SleepingOn");
         sleeping = true;
-        animator.SetBool("Sleeping", true);
+        Debug.Log("SleepingOn");
+        //animator.SetBool("Sleeping", true);
     }
     public void SleepingOff()
     {
+        Debug.Log("SleepingOFF");
         sleeping = false;
-        animator.SetBool("Sleeping", false);
+        Debug.Log("SleepingOFF");
+        //animator.SetBool("Sleeping", false);
     }
 }

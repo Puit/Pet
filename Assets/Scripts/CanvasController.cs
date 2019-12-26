@@ -9,6 +9,9 @@ public class CanvasController : MonoBehaviour
     public bool objectTouched = false;
     public Vector3 fingerPosition;
 
+    private RaycastHit2D hit;
+
+
     private void Update()
     {
         //If mouse is down
@@ -18,19 +21,20 @@ public class CanvasController : MonoBehaviour
             fingerDown = true;
 
             Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero);
-            if (hit != null && hit.collider != null)
+            hit = Physics2D.Raycast(pos, Vector2.zero);
+            if (hit.collider != null)
             {
                 //Debug.Log("I'm hitting " + hit.collider.name);
                 if (hit.collider.tag == "Player")
                     playerTouched = true;
                 else
                     playerTouched = false;
+
                 if (hit.collider.tag == "Object")
                     objectTouched = true;
                 else
                     objectTouched = false;
-                Debug.Log("Object Touchet: " + objectTouched);
+                //Debug.Log("Object Touchet: " + objectTouched);
             }
         }
 
@@ -49,20 +53,20 @@ public class CanvasController : MonoBehaviour
     }
     public string GetTouchedTag()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (fingerDown && hit.collider)
         {
-            fingerPosition = new Vector3(Input.mousePosition.x - (Screen.width / 2), Input.mousePosition.y - (Screen.height / 2), Input.mousePosition.z);
-            fingerDown = true;
-
-            Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero);
-            if (hit != null && hit.collider != null)
-            {
-
-                return hit.collider.tag;
-                
-            }
+            return hit.collider.tag;
         }
-        return "";
+        else
+            return "";
+    }
+   
+    public void DestroyObject()
+    {
+        if (fingerDown && hit.collider)
+        {
+            
+            Destroy(hit.collider.gameObject);
+        }
     }
 }
