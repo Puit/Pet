@@ -3,10 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using UnityEngine.UI;
 
 public class SceneController : MonoBehaviour
 {
     public int day, month, year, hour, minute, second;
+    public CoinsController coins;
+    public Transform foodPanel;
 
     // Health, Food, WC, Play, Sleep, Lovis, Whatter
     public List<DepositController> deposits;
@@ -14,25 +17,28 @@ public class SceneController : MonoBehaviour
     {
         Debug.Log("I'm Awake");
         UpdateDeposits();
+        UpdateCoins();
     }
     public void OnApplicationPause(bool pause)
     {
         Debug.Log("I'm OnApplicationPause");
-        SaveToFile();
+        SaveDeposits();
+        SaveCoins();
     }
+
     private void OnApplicationQuit()
     {
         Debug.Log("I'm OnApplicationQuit");
-        SaveToFile();
+        SaveDeposits();
+        SaveCoins();
     }
     void Update()
     {
         //Debug.Log("Date: " + System.DateTime.Now.Day + ":" + System.DateTime.Now.Month + ":" + System.DateTime.Now.Year + " Hora: " + System.DateTime.Now.Hour + ":" + System.DateTime.Now.Minute + ":" + System.DateTime.Now.Second + ":" + System.DateTime.Now.Millisecond);
 
     }
-    public void SaveToFile()
+    public void SaveDeposits()
     {
-
         day = System.DateTime.Now.Day;
         month = System.DateTime.Now.Month;
         year = System.DateTime.Now.Year;
@@ -48,6 +54,7 @@ public class SceneController : MonoBehaviour
 
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/savedGame.gd");
+        //FileStream file = File.Create(Application.persistentDataPath + pathAndFileName);
         bf.Serialize(file, data);
         file.Close();
 
@@ -78,5 +85,43 @@ public class SceneController : MonoBehaviour
             deposits[6].UpdateTime(data.depWater, data.SPSWater, data.day, data.month, data.year, data.hour, data.minute, data.second);
         }
 
+    }
+
+    public void SaveCoins()
+    {
+
+        int data = coins.quantity;
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = File.Create(Application.persistentDataPath + "/coins.gd");
+
+        bf.Serialize(file, data);
+        file.Close();
+
+    }
+
+    public void UpdateCoins()
+    {
+        if (File.Exists(Application.persistentDataPath + "/coins.gd"))
+        {
+            int data;
+            BinaryFormatter bf = new BinaryFormatter();
+
+            FileStream file = File.Open(Application.persistentDataPath + "/coins.gd", FileMode.Open);
+            data = (int)bf.Deserialize(file);
+
+            file.Close();
+
+            coins.quantity = data;
+        }
+    }
+    public void ShowFoodPanel()
+    {
+        //foodPanel.enabled = true;
+        foodPanel.gameObject.SetActive(true);
+    }
+    public void HideFoodPanel()
+    {
+        //foodPanel.enabled = false;
+        foodPanel.gameObject.SetActive(false);
     }
 }

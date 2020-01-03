@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,15 +9,20 @@ public class ObjectsController : MonoBehaviour
 
     //public Button left, right;
     public GameObject myObject;
+    public Image quantityImage;
+    public TextMeshProUGUI quantityText;
+
     public CanvasController canvas;
     public Vector3 startPosition;
 
     public List<GameObject> FoodObjects, HealthObjects, PlayObjects, SleepObjects;
+    public List<GameObject> FoodObjectsSimple, HealthObjectsSimple, PlayObjectsSimple, SleepObjectsSimple;
+
     public DataType myDataType;
 
     public GameObject actualObject;
 
-    private int size, actualIndex;
+    private int size, actualIndex = 0;
 
     public bool dragging = false;
 
@@ -24,8 +30,13 @@ public class ObjectsController : MonoBehaviour
     {
         startPosition = myObject.transform.position;
         //InstantiateObject(0, FoodObjects);
+        SimplifyList(FoodObjects, FoodObjectsSimple);
+        SimplifyList(HealthObjects, HealthObjectsSimple);
+        SimplifyList(PlayObjects, PlayObjectsSimple);
+        SimplifyList(SleepObjects, SleepObjectsSimple);
+
         ShowFoodObjects();
-        
+
     }
 
     public void InstantiateObject(int index, List<GameObject> listOfObjects)
@@ -56,19 +67,19 @@ public class ObjectsController : MonoBehaviour
         switch (myDataType)
         {
             case DataType.Food:
-                GoLeft(FoodObjects);
+                GoLeft(FoodObjectsSimple);
                 break;
             case DataType.Health:
-                GoLeft(HealthObjects);
+                GoLeft(HealthObjectsSimple);
                 break;
             case DataType.Lovis:
 
                 break;
             case DataType.Play:
-                GoLeft(PlayObjects);
+                GoLeft(PlayObjectsSimple);
                 break;
             case DataType.Sleep:
-                GoLeft(SleepObjects);
+                GoLeft(SleepObjectsSimple);
                 break;
             case DataType.Water:
 
@@ -86,19 +97,19 @@ public class ObjectsController : MonoBehaviour
         switch (myDataType)
         {
             case DataType.Food:
-                GoRight(FoodObjects);
+                GoRight(FoodObjectsSimple);
                 break;
             case DataType.Health:
-                GoRight(HealthObjects);
+                GoRight(HealthObjectsSimple);
                 break;
             case DataType.Lovis:
 
                 break;
             case DataType.Play:
-                GoRight(PlayObjects);
+                GoRight(PlayObjectsSimple);
                 break;
             case DataType.Sleep:
-                GoRight(SleepObjects);
+                GoRight(SleepObjectsSimple);
                 break;
             case DataType.Water:
 
@@ -114,7 +125,7 @@ public class ObjectsController : MonoBehaviour
     private void GoRight(List<GameObject> listOfObjects)
     {
         size = listOfObjects.Count;
-        actualIndex = GetIndexActualObject(listOfObjects);
+        //actualIndex = GetIndexActualObject(listOfObjects);
 
         if (actualIndex >= 0)
         {
@@ -122,50 +133,119 @@ public class ObjectsController : MonoBehaviour
             if ((actualIndex + 1) == size)
             {
                 InstantiateObject(0, listOfObjects);
+                actualIndex = 0;
             }
             else
             {
                 InstantiateObject(actualIndex + 1, listOfObjects);
+                actualIndex++;
             }
         }
     }
     private void GoLeft(List<GameObject> listOfObjects)
     {
         size = listOfObjects.Count;
-        actualIndex = GetIndexActualObject(listOfObjects);
+        //actualIndex = GetIndexActualObject(listOfObjects);
 
         if (actualIndex >= 0)
         {
             RemoveActualObject();
             if ((actualIndex) == 0)
+            {
                 InstantiateObject(size - 1, listOfObjects);
+                actualIndex = size - 1;
+            }
             else
+            {
                 InstantiateObject(actualIndex - 1, listOfObjects);
+                actualIndex--;
+            }
+                
         }
     }
     public void ShowFoodObjects()
     {
         RemoveActualObject();
-        InstantiateObject(0, FoodObjects);
+        InstantiateObject(0, FoodObjectsSimple);
         myDataType = DataType.Food;
     }
     public void ShowHealthObjects()
     {
         RemoveActualObject();
-        InstantiateObject(0, HealthObjects);
+        InstantiateObject(0, HealthObjectsSimple);
         myDataType = DataType.Health;
     }
     public void ShowSleepObjects()
     {
         RemoveActualObject();
-        InstantiateObject(0, SleepObjects);
+        InstantiateObject(0, SleepObjectsSimple);
         myDataType = DataType.Sleep;
     }
     public void ShowPlayObjects()
     {
         RemoveActualObject();
-        InstantiateObject(0, PlayObjects);
+        InstantiateObject(0, PlayObjectsSimple);
         myDataType = DataType.Play;
     }
 
+    public void SimplifyList(List<GameObject> bigList, List<GameObject> simpleList)
+    {
+        int pre = simpleList.Count;
+        simpleList.Clear();
+        
+        foreach(GameObject b in bigList)
+        {
+            if (!simpleList.Contains(b))
+                simpleList.Add(b);
+        }
+        //Prevent that it doesn't instantiate again the object that is not in list anymore
+        if (pre > simpleList.Count)
+            GoRightButton();
+
+    }
+    public void ShowQuantity(GameObject g, List<GameObject> l)
+    {
+        int quantity = 0;
+        foreach(GameObject x in l)
+        {
+            if (x == g)
+                quantity++;
+        }
+        if (quantity > 0)
+        {
+            quantityImage.gameObject.SetActive(true);
+            quantityText.text = quantity.ToString();
+        }
+        else
+        {
+            quantityImage.gameObject.SetActive(false);
+            quantityText.text = "";
+        }
+    }
+    public void RemoveObjectFromList(GameObject g)
+    {
+        Debug.Log("IN");
+        if (g.GetComponent<FoodController>() || g.GetComponent<WaterController>())
+        {
+            foreach(GameObject o in FoodObjects)
+            {
+                if (g.name.Contains(o.name))
+                {
+                    g = o;
+                }
+            }
+            FoodObjects.Remove(g);
+            SimplifyList(FoodObjects, FoodObjectsSimple);
+            //Change Number
+            ShowQuantity(g, FoodObjects);
+        }
+        if (g.GetComponent<HealthController>())
+        {
+            
+            HealthObjects.Remove(g);
+            SimplifyList(HealthObjects, HealthObjectsSimple);
+            //Change Number
+            ShowQuantity(g, HealthObjects);
+        }
+    }
 }

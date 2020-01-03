@@ -21,9 +21,14 @@ public class CobiController : MonoBehaviour
     public GameObject eyeBacks, cheeks, mouth;
     public Sprite mouthHappy, mouthSad;
 
+    public float coinTime = 5f;
+    private float coinTimer = 0f;
+    CoinsController coinsController;
+
     private void Start()
     {
         canvas = FindObjectOfType<CanvasController>();
+        coinsController = FindObjectOfType<CoinsController>();
     }
     
     void Update()
@@ -52,6 +57,12 @@ public class CobiController : MonoBehaviour
             {
                 deposits[5].percentage += 5f * Time.deltaTime;
                 animator.SetBool("Touched", true);
+
+                if (coinTimer <= 0)
+                {
+                    coinTimer = coinTime;
+                    coinsController.InstantiateCoin();
+                }
             }
             else
             {
@@ -98,6 +109,9 @@ public class CobiController : MonoBehaviour
                 mouth.GetComponent<SpriteRenderer>().sprite = mouthSad;
             else
                 mouth.GetComponent<SpriteRenderer>().sprite = mouthHappy;
+
+            if (coinTimer > 0)
+                coinTimer -= Time.deltaTime;
         }
         catch (Exception e)
         {

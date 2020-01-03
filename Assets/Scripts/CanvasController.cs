@@ -60,7 +60,16 @@ public class CanvasController : MonoBehaviour
         else
             return "";
     }
-   
+    public Vector2 GetTouchedPosition()
+    {
+        if (fingerDown && hit.collider)
+        {
+            return hit.collider.transform.position;
+        }
+        else
+            return new Vector2(0,0);
+    }
+
     public void DestroyObject()
     {
         if (fingerDown && hit.collider)

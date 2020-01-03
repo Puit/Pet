@@ -10,7 +10,7 @@ public class WaterController : MonoBehaviour, IDragHandler, IEndDragHandler
     public float incrementation = 5f;
 
     private Vector3 acceleration;
-    public DepositController food;
+    public DepositController water;
 
     private ObjectsController objects;
     private SpriteRenderer mouth;
@@ -34,7 +34,7 @@ public class WaterController : MonoBehaviour, IDragHandler, IEndDragHandler
             if (dep.name.Equals("Water"))
             {
                 //Debug.Log("IN IF");
-                food = dep.GetComponent<DepositController>();
+                water = dep.GetComponent<DepositController>();
             }
         }
 
@@ -87,7 +87,9 @@ public class WaterController : MonoBehaviour, IDragHandler, IEndDragHandler
         {
             CobiController cobi = hit.collider.GetComponent<CobiController>();
 
-            food.percentage += incrementation;
+            Debug.Log("IN WATER");
+            water.percentage += incrementation;
+            objects.RemoveObjectFromList(gameObject);
         }
 
         transform.position = startPosition;

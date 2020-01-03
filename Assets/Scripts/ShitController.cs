@@ -6,14 +6,18 @@ public class ShitController : MonoBehaviour
 {
     public DepositController WCDeposit;
     public List<GameObject> shits;
+    //public List<GameObject> coins;
+    public CoinsController coinsController;
     public GameObject point1, point2;
     public CanvasController canvas;
+    public float speed = 10f;
 
     private GameObject shitInScene; //To instantiate an object it is need to related with something
 
     private void Start()
     {
         canvas = FindObjectOfType<CanvasController>();
+        coinsController = FindObjectOfType<CoinsController>();
     }
     public void Update()
     {
@@ -38,8 +42,8 @@ public class ShitController : MonoBehaviour
         //Debug.Log(canvas.GetTouchedTag());
         if (canvas.GetTouchedTag().Equals("Shit"))
         {
-
-            canvas.DestroyObject();
+            canvas.DestroyObject();            
+            coinsController.InstantiateCoin();
         }
     }
 }

@@ -73,7 +73,7 @@ MonoBehaviour:
   m_FillMethod: 4
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 1
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!114 &4407881098107657749
@@ -91,7 +91,7 @@ MonoBehaviour:
   incrementation: 10
   food: {fileID: 0}
   mouthOpen: {fileID: 21300000, guid: 5514e8afc0fee40478b37e44cecf8e71, type: 3}
-  mouthClose: {fileID: 21300000, guid: 5dc59cf453630fe428cad347a732e420, type: 3}
+  previouseMouth: {fileID: 0}
 --- !u!50 &4407881098107657748
 Rigidbody2D:
   serializedVersion: 4

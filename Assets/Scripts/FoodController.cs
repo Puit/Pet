@@ -6,10 +6,10 @@ using UnityEngine.EventSystems;
 public class FoodController : MonoBehaviour, IDragHandler, IEndDragHandler
 {
     private Vector3 startPosition;
-    private CanvasController canvas;
+    //private CanvasController canvas;
     public float incrementation = 5f;
 
-    private Vector3 acceleration;
+    //private Vector3 acceleration;
     public DepositController food;
 
     private ObjectsController objects;
@@ -39,12 +39,12 @@ public class FoodController : MonoBehaviour, IDragHandler, IEndDragHandler
         }
             
         startPosition = transform.position;
-        canvas = FindObjectOfType<CanvasController>();
+        //canvas = FindObjectOfType<CanvasController>();
     }
     public void OnDrag(PointerEventData eventData)
     {
         transform.position = Input.mousePosition;
-        acceleration = Input.acceleration;
+        //acceleration = Input.acceleration;
         objects.dragging = true;
 
         Vector3 pos = Camera.main.ScreenToWorldPoint(transform.position);
@@ -60,13 +60,13 @@ public class FoodController : MonoBehaviour, IDragHandler, IEndDragHandler
             if (hit.collider.name.Equals("Head"))
             {
                 mouth.sprite = mouthOpen;
-                Debug.Log("Change to open"); //NO CAMBIA PORQUE EL ANIMATION FUERZA A QUE SE MANTENGA OTRA VOCA
+                //Debug.Log("Change to open"); //NO CAMBIA PORQUE EL ANIMATION FUERZA A QUE SE MANTENGA OTRA VOCA
             }
 
             else
             {
                 mouth.sprite = previouseMouth;
-                Debug.Log("Change to previouse");
+                //Debug.Log("Change to previouse");
             }
                 
         }
@@ -88,9 +88,15 @@ public class FoodController : MonoBehaviour, IDragHandler, IEndDragHandler
             CobiController cobi = hit.collider.GetComponent<CobiController>();
             
             food.percentage += incrementation;
+            
+            //Remove object from list
+            objects.RemoveObjectFromList(gameObject);
         }
 
         transform.position = startPosition;
         objects.dragging = false;
+
+        
+
     }
 }
