@@ -31,7 +31,6 @@ public class ObjectToByController : MonoBehaviour
             //Debug.Log(objectToBuy.GetComponent<Image>());
             icon.sprite = objectToBuy.GetComponent<Image>().sprite;
         }
-
     }
 
     public void ButtonCliked()
@@ -41,17 +40,15 @@ public class ObjectToByController : MonoBehaviour
             coins.quantity -= price;
             if (objectToBuy.GetComponent<FoodController>() || objectToBuy.GetComponent<WaterController>())
             {
-                objectsController.FoodObjects.Add(objectToBuy);
-                objectsController.SimplifyList(objectsController.FoodObjects, objectsController.FoodObjectsSimple);
+                objectsController.AddFoodObject(objectToBuy);
+                objectsController.SimplifyList(objectsController.FoodObjectsBig, objectsController.FoodObjectsSimple);
             }
                 
             if (objectToBuy.GetComponent<HealthController>())
             {
-                objectsController.HealthObjects.Add(objectToBuy);
-                objectsController.SimplifyList(objectsController.HealthObjects, objectsController.HealthObjectsSimple);
+                objectsController.AddHealthObject(objectToBuy);
+                objectsController.SimplifyList(objectsController.HealthObjectsBig, objectsController.HealthObjectsSimple);
             }
-                
-            
         }
     }
 }

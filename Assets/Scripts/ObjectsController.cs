@@ -15,34 +15,71 @@ public class ObjectsController : MonoBehaviour
     public CanvasController canvas;
     public Vector3 startPosition;
 
+    //Index respecte el FoodObject (el d'exemple) y  el FoodObjectBig
+    [SerializeField]
+    public List<int> FoodObjectsList;
+    public List<int> HealthObjectsList, PlayObjectsList, SleepObjectsList;
+
+    //This is the example of all
     public List<GameObject> FoodObjects, HealthObjects, PlayObjects, SleepObjects;
+    public List<GameObject> FoodObjectsBig, HealthObjectsBig, PlayObjectsBig, SleepObjectsBig;
     public List<GameObject> FoodObjectsSimple, HealthObjectsSimple, PlayObjectsSimple, SleepObjectsSimple;
 
     public DataType myDataType;
 
     public GameObject actualObject;
 
-    private int size, actualIndex = 0;
+    public int size, actualIndex = 0;
 
     public bool dragging = false;
 
-    void Start()
+    public void OnStart()
     {
+
+        //FoodObjectsBig = FoodObjects;
+        //HealthObjectsBig = HealthObjects;
+        //PlayObjectsBig = PlayObjects;
+        //SleepObjectsBig = SleepObjects;
+
+        IntListToBigList(FoodObjectsList, FoodObjects, FoodObjectsBig);
+        IntListToBigList(HealthObjectsList, HealthObjects, HealthObjectsBig);
+        IntListToBigList(PlayObjectsList, PlayObjects, PlayObjectsBig);
+        IntListToBigList(SleepObjectsList, SleepObjects, SleepObjectsBig);
+
         startPosition = myObject.transform.position;
         //InstantiateObject(0, FoodObjects);
-        SimplifyList(FoodObjects, FoodObjectsSimple);
-        SimplifyList(HealthObjects, HealthObjectsSimple);
-        SimplifyList(PlayObjects, PlayObjectsSimple);
-        SimplifyList(SleepObjects, SleepObjectsSimple);
+        SimplifyList(FoodObjectsBig, FoodObjectsSimple);
+        SimplifyList(HealthObjectsBig, HealthObjectsSimple);
+        SimplifyList(PlayObjectsBig, PlayObjectsSimple);
+        SimplifyList(SleepObjectsBig, SleepObjectsSimple);
 
         ShowFoodObjects();
+
+        //Easy way to show the number of objects
+        //GoLeftButton();
+        GoRightButton();
+    }
+    public void IntListToBigList(List<int> intList, List<GameObject> objectList, List<GameObject> bigList)
+    {
+        if (intList.Count > 1) 
+        {
+            foreach (int i in intList)
+            {
+                bigList.Add(objectList[i]);
+            }
+        }
+        else
+        {
+            bigList.Add(objectList[0]);
+            intList.Add(0);
+        }
 
     }
 
     public void InstantiateObject(int index, List<GameObject> listOfObjects)
     {
         actualObject = Instantiate(listOfObjects[index], myObject.transform.position, myObject.transform.rotation, transform);
-        
+        actualObject.transform.SetAsFirstSibling(); //Sets it at the first position so we can see the number of objects
     }
     public void RemoveActualObject()
     {
@@ -68,6 +105,7 @@ public class ObjectsController : MonoBehaviour
         {
             case DataType.Food:
                 GoLeft(FoodObjectsSimple);
+                ShowQuantity(FoodObjectsSimple[actualIndex], FoodObjectsSimple);
                 break;
             case DataType.Health:
                 GoLeft(HealthObjectsSimple);
@@ -98,6 +136,7 @@ public class ObjectsController : MonoBehaviour
         {
             case DataType.Food:
                 GoRight(FoodObjectsSimple);
+                ShowQuantity(FoodObjectsSimple[actualIndex], FoodObjectsSimple);
                 break;
             case DataType.Health:
                 GoRight(HealthObjectsSimple);
@@ -140,6 +179,7 @@ public class ObjectsController : MonoBehaviour
                 InstantiateObject(actualIndex + 1, listOfObjects);
                 actualIndex++;
             }
+            //size = listOfObjects.Count;
         }
     }
     private void GoLeft(List<GameObject> listOfObjects)
@@ -160,7 +200,8 @@ public class ObjectsController : MonoBehaviour
                 InstantiateObject(actualIndex - 1, listOfObjects);
                 actualIndex--;
             }
-                
+            //size = listOfObjects.Count;
+            
         }
     }
     public void ShowFoodObjects()
@@ -191,16 +232,23 @@ public class ObjectsController : MonoBehaviour
     public void SimplifyList(List<GameObject> bigList, List<GameObject> simpleList)
     {
         int pre = simpleList.Count;
+
         simpleList.Clear();
-        
-        foreach(GameObject b in bigList)
+
+        foreach (GameObject b in bigList)
         {
             if (!simpleList.Contains(b))
                 simpleList.Add(b);
         }
+        foreach(GameObject s in simpleList)
+        {
+            if (!bigList.Contains(s))
+                simpleList.Remove(s);
+        }
+        //Debug.Log("POSTCOUNT: " + simpleList.Count);
         //Prevent that it doesn't instantiate again the object that is not in list anymore
         if (pre > simpleList.Count)
-            GoRightButton();
+            GoLeftButton();
 
     }
     public void ShowQuantity(GameObject g, List<GameObject> l)
@@ -227,25 +275,39 @@ public class ObjectsController : MonoBehaviour
         Debug.Log("IN");
         if (g.GetComponent<FoodController>() || g.GetComponent<WaterController>())
         {
-            foreach(GameObject o in FoodObjects)
+            foreach(GameObject o in FoodObjectsBig)
             {
                 if (g.name.Contains(o.name))
                 {
                     g = o;
                 }
             }
-            FoodObjects.Remove(g);
-            SimplifyList(FoodObjects, FoodObjectsSimple);
+            int index = FoodObjectsBig.IndexOf(g);
+            FoodObjectsList.Remove(FoodObjectsList[index]);
+            FoodObjectsBig.Remove(g);
+            SimplifyList(FoodObjectsBig, FoodObjectsSimple);
             //Change Number
-            ShowQuantity(g, FoodObjects);
+            ShowQuantity(g, FoodObjectsBig);
         }
+
+
         if (g.GetComponent<HealthController>())
         {
-            
-            HealthObjects.Remove(g);
-            SimplifyList(HealthObjects, HealthObjectsSimple);
+
+            HealthObjectsBig.Remove(g);
+            SimplifyList(HealthObjectsBig, HealthObjectsSimple);
             //Change Number
-            ShowQuantity(g, HealthObjects);
+            ShowQuantity(g, HealthObjectsBig);
         }
+    }
+    public void AddFoodObject(GameObject o)
+    {
+        FoodObjectsBig.Add(o);
+        FoodObjectsList.Add(FoodObjects.IndexOf(o));
+    }
+    public void AddHealthObject(GameObject o)
+    {
+        HealthObjectsBig.Add(o);
+        HealthObjectsList.Add(HealthObjects.IndexOf(o));
     }
 }

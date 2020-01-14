@@ -10,20 +10,31 @@ public class SceneController : MonoBehaviour
     public int day, month, year, hour, minute, second;
     public CoinsController coins;
     public Transform foodPanel;
+    public ObjectsController objectsController;
 
     // Health, Food, WC, Play, Sleep, Lovis, Whatter
     public List<DepositController> deposits;
     public void Awake()
     {
         Debug.Log("I'm Awake");
+        //Debug.Log(Application.persistentDataPath + "/coins.gd");
         UpdateDeposits();
         UpdateCoins();
+
+        //Deploys how many objects do I have
+        UpdateObjects();
+        objectsController.OnStart();
     }
     public void OnApplicationPause(bool pause)
     {
         Debug.Log("I'm OnApplicationPause");
         SaveDeposits();
         SaveCoins();
+        //Detect if sleeping and save it
+        //Detect how many poops need to place
+
+        //Save how many objects do I have
+        SaveObjects();
     }
 
     private void OnApplicationQuit()
@@ -31,6 +42,25 @@ public class SceneController : MonoBehaviour
         Debug.Log("I'm OnApplicationQuit");
         SaveDeposits();
         SaveCoins();
+
+        //Save how many objects do I have
+        SaveObjects();
+    }
+    void calcularpercentatge(float ingresoEntrada, float porcentatge, float anys)
+    {
+        float suma = ingresoEntrada;
+       
+        for(int i = 0; i <= anys; i++)
+        {
+            suma += porcentatge * ingresoEntrada;
+            i++;
+            Debug.Log("LA i " + i);
+        }
+        Debug.Log("Resultado: " + suma);
+    }
+    private void Start()
+    {
+        calcularpercentatge(9300f, 4f, 20f);
     }
     void Update()
     {
@@ -86,7 +116,44 @@ public class SceneController : MonoBehaviour
         }
 
     }
+    public void SaveObjects()
+    {
 
+        //string data = objectsController.FoodObjects;
+        Debug.Log("In FileSave");
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = File.Create(Application.persistentDataPath + "/foodObjects.gd");
+
+        bf.Serialize(file, objectsController.FoodObjectsList);
+        file.Close();
+        foreach (int i in objectsController.FoodObjectsList)
+        {
+            Debug.Log(i);
+        }
+
+    }
+    public void UpdateObjects()
+    {
+        //Debug.Log("In UpdateDeposits");
+        if (File.Exists(Application.persistentDataPath + "/foodObjects.gd"))
+        {
+            Debug.Log("In FileExist");
+            
+            List<int> data;
+            BinaryFormatter bf = new BinaryFormatter();
+
+            FileStream file = File.Open(Application.persistentDataPath + "/foodObjects.gd", FileMode.Open);
+            data = (List<int>)bf.Deserialize(file);
+
+            file.Close();
+
+            foreach(int i in data)
+            {
+                Debug.Log(i);
+            }
+            objectsController.FoodObjectsList = data;
+        }
+    }
     public void SaveCoins()
     {
 
